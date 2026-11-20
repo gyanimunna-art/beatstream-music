@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -7,14 +7,16 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const query = (req.query.q || req.query.query || '').trim();
+  const query = String(req.query.q || req.query.query || '').trim();
   if (!query) {
     return res.status(200).json({ ok: true, results: [] });
   }
 
   const endpoints = [
+    `https://saavn.sumit.co/api/search/songs?query=${encodeURIComponent(query)}&limit=20`,
     `https://saavn.dev/api/search/songs?query=${encodeURIComponent(query)}&limit=20`,
-    `https://jiosaavn-api-privatecvc2.vercel.app/search/songs?query=${encodeURIComponent(query)}&limit=20`
+    `https://jiosaavn-api-privatecvc2.vercel.app/search/songs?query=${encodeURIComponent(query)}&limit=20`,
+    `https://jiosaavn-api-2-harsh-patel.vercel.app/api/search/songs?query=${encodeURIComponent(query)}&limit=20`
   ];
 
   for (const url of endpoints) {
@@ -70,4 +72,4 @@ export default async function handler(req, res) {
   }
 
   return res.status(502).json({ ok: false, error: 'All upstream audio APIs failed', results: [] });
-}
+};
